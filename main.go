@@ -59,7 +59,6 @@ func streamFile(fi os.FileInfo) {
 		return
 	}
 	buf := make([]byte, BufferSize)
-	lastReadTime := time.Now()
 	for {
 		n, err := f.Read(buf)
 		if err != nil && err != io.EOF {
@@ -67,7 +66,6 @@ func streamFile(fi os.FileInfo) {
 			break
 		}
 		if n > 0 {
-			lastReadTime = time.Now()
 			written := 0
 			for written < n {
 				wn, err := conn.Write(buf[written:n])
@@ -78,11 +76,6 @@ func streamFile(fi os.FileInfo) {
 				written += wn
 			}
 		} else {
-			readSince := time.Since(lastReadTime)
-			if readSince.Seconds() > 1 {
-				log.Println("No new data on", fi.Name(), "since", lastReadTime, "-- closing")
-				break
-			}
 			time.Sleep(20 * time.Millisecond)
 		}
 	}
