@@ -12,6 +12,9 @@ import (
 	"time"
 )
 
+// InactiveFileSeconds governs how many seconds to wait for new data in a file before stopping its stream
+const InactiveFileSeconds = 5
+
 // DefaultPort is the default TCP port to use for streaming
 const DefaultPort = 2002
 
@@ -79,7 +82,7 @@ func streamFile(fi os.FileInfo) {
 			}
 		} else {
 			readSince := time.Since(lastReadTime)
-			if readSince.Seconds() > 1 {
+			if readSince.Seconds() > InactiveFileSeconds {
 				log.Println("No new data on", fi.Name(), "since", lastReadTime, "-- closing")
 				break
 			}
