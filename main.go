@@ -76,7 +76,7 @@ func streamFile(fi os.FileInfo) {
 				wn, err := conn.Write(buf[written:n])
 				if err != nil {
 					log.Println(fi.Name(), err)
-					break
+					return
 				}
 				written += wn
 			}
